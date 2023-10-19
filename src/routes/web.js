@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getHomepage, getAbc, postCreateUser } = require('../controllers/homeController');
+const {
+    getHomepage,
+    getAbc,
+    postCreateUser,
+    getCreatePage,
+    getUpdatePage,
+    postUpdateUser
+} = require('../controllers/homeController');
 
 // router.get('/cuong', (req, res) => {
 //     res.render('sample.ejs');
@@ -12,6 +19,10 @@ router.get('', getHomepage);
 // });
 router.get('/abc', getAbc);
 
+router.get('/create', getCreatePage);
+router.get('/update/:id', getUpdatePage);
+
 router.post('/create-user', postCreateUser);
+router.post('/update-user', postUpdateUser);
 
 module.exports = router;

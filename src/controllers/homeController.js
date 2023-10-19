@@ -1,42 +1,59 @@
 const { request } = require('express');
 const connection = require('../config/database');
+const { getAllUsers, createUser, getUserById, updateUserById } = require('../services/CRUDService');
 
 const getAbc = (req, res) => {
     // res.send('hello ABC');
     res.render('sample.ejs');
 };
 
-const getHomepage = (req, res) => {
-    //process data
-    //call model
-    // connection.query('SELECT * FROM Users u', function (err, results, fields) {
-    //     let users = results;
-    //     console.log('>>>>>results=', results); // results contains rows returned by server // console.log('>>>>>fields=', fields); // fields contains extra meta data about results, if available
-    //     console.log('>>>>>check users ', users);
-    //     res.send(JSON.stringify(users));
-    // });
-    return res.render('home.ejs');
+const getHomepage = async (req, res) => {
+    let results = await getAllUsers();
+    console.log('>>>>> check results: ', results);
+    return res.render('home.ejs', { listUsers: results });
 };
 
-const postCreateUser = (req, res) => {
+const getCreatePage = (req, res) => {
+    res.render('create.ejs');
+};
+
+const postCreateUser = async (req, res) => {
     let email = req.body.email;
     let name = req.body.myname;
     let city = req.body.city;
     //let {email, name, cỉty} = req.body; //cách viết ngắn hơn
     console.log('email = ', email, ', name = ', name, ', city = ', city);
-    connection.query(
-        `INSERT INTO Users(email,name,city)
-        VALUES (?, ?, ?)`,
-        [email, name, city],
-        function (err, results) {
-            console.log('>>>>>>>>results: ', results);
-            res.send('created user succeed');
-        }
-    );
+    let results = await createUser(email, name, city);
+    console.log('>>>> check results: ', results);
+    res.send('Created user succeed');
+};
+
+const getUpdatePage = async (req, res) => {
+    const userId = req.params.id;
+    let user = await getUserById(userId);
+    console.log('>>>> check results: ', user);
+    res.render('edit.ejs', { userEdit: user });
+};
+
+const postUpdateUser = async (req, res) => {
+    let email = req.body.email;
+    let name = req.body.myname;
+    let city = req.body.city;
+    let userId = req.body.userId;
+    //let {email, name, cỉty} = req.body; //cách viết ngắn hơn
+    console.log('email = ', email, ', name = ', name, ', city = ', city, ', user_id = ', userId);
+
+    let results = await updateUserById(email, city, name, userId);
+    console.log('>>>> check results: ', results);
+    // res.send('Updated user succeed');
+    res.redirect('/');
 };
 
 module.exports = {
     getHomepage,
     getAbc,
-    postCreateUser
+    postCreateUser,
+    getCreatePage,
+    getUpdatePage,
+    postUpdateUser
 };
