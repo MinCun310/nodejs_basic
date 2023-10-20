@@ -6,6 +6,8 @@ const getAllUsers = async () => {
 };
 
 const createUser = async (email, name, city) => {
+    //let {email, name, cỉty} = req.body; //cách viết ngắn hơn
+    // console.log('email = ', email, ', name = ', name, ', city = ', city);
     let [results, fields] = await connection.query(
         `INSERT INTO Users(email,name,city)
         VALUES (?, ?, ?)`,
@@ -30,9 +32,15 @@ const updateUserById = async (email, city, name, userId) => {
     return results;
 };
 
+const deleteUserById = async (id) => {
+    let [results, fields] = await connection.query(`DELETE FROM Users WHERE id = ? `, [id]);
+    return results;
+};
+
 module.exports = {
     getAllUsers,
     getUserById,
     createUser,
-    updateUserById
+    updateUserById,
+    deleteUserById
 };
